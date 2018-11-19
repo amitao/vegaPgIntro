@@ -37,7 +37,7 @@ app.listen( port, ( req, res )=>{
 
 
 // test route
-app.get('/test', (req, res)=>{
+app.get('/songs', (req, res)=>{
     console.log('/test GET');
     // create a query
     const queryString = `SELECT * FROM songs;`;
@@ -51,3 +51,16 @@ app.get('/test', (req, res)=>{
     });
     
 });
+
+app.post('/songs', (req, res)=>{
+    console.log('in /songs POST:', req.body);
+    // create query string
+    const queryString = `INSERT INTO songs (artist, track, rank, published)
+    VALUES ($1, $2, $3, $4);`; // $1 placeholders
+    pool.query(queryString, [req.body.artist, req.body.track, req.body.rank, req.body.published]).then(()=>{
+        res.sendStatus(201);
+    }).catch((err)=>{
+        console.log('error wrtiting song:', err);
+        res.sendStatus( 500 );
+    });
+})
